@@ -1,27 +1,30 @@
+// CorreiosService.java
 package com.correios.correios;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import com.correios.correios.util.SSLUtil;
 
 @Service
 public class CorreiosService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private static final Logger log = LoggerFactory.getLogger(CorreiosService.class);
 
     public Cep buscarCEP(String cep) {
-        String url = "https://viacep.com.br/ws/" + cep + "/json/";
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        SSLUtil.disableCertificateValidation();
+        final String uri = "https://opencep.com/v1/" + cep;
 
-        ResponseEntity<Cep> response = restTemplate.exchange(url, HttpMethod.GET, entity, Cep.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Erro ao consultar CEP: " + response.getStatusCode());
+        RestTemplate restTemplate = new RestTemplate();
+        Cep result = null;
+        try {
+            result = restTemplate.getForObject(uri, Cep.class);
+            log.info("CEP encontrado: {}", result);
+        } catch (RestClientException e) {
+            log.error("Erro ao buscar CEP: {}", cep, e);
         }
+        return result;
     }
 }

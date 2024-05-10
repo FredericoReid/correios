@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de CEP</title>
+</head>
+<body>
+<h1>Consulta de CEP</h1>
+<form id="form" action="/cep" method="get">
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" name="cep" placeholder="Digite o CEP">
+    <button type="submit">Pesquisar</button>
+</form>
+
+<div id="resultado">
+</div>
+</div>
+
+<div id="erro"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#form").submit(function(event) {
+            event.preventDefault();
+
+            var cep = $("#cep").val();
+
+            if (cep) {
+                $.ajax({
+                    url: /cep,
+                    type: "GET",
+                    success: function(data) {
+                        $("#resultado").html(
+                            "<p>CEP: " + data.cep + "</p>" +
+                            "<p>Rua: " + data.logradouro + "</p>" +
+                            "<p>Bairro: " + data.bairro + "</p>" +
+                            "<p>Cidade: " + data.localidade + "</p>" +
+                            "<p>Estado: " + data.uf + "</p>"
+                        );
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage;
+                        switch (xhr.status) {
+                            case 404:
+                                errorMessage = "CEP não encontrado.";
+                                break;
+                            case 500:
+                                errorMessage = "Erro interno no servidor.";
+                                break;
+                            default:
+                                errorMessage = xhr.status + ': ' + xhr.statusText;
+                        }
+                        $("#erro").text('Erro ao consultar CEP: ' + errorMessage);
+                    }
+                });
+            } else {
+                alert("CEP inválido!");
+            }
+        });
+    });
+</script>
+</body>
+</html>

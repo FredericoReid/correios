@@ -1,7 +1,6 @@
 package com.correios.correios;
 
 public class Cep {
-
     private String cep;
     private String logradouro;
     private String bairro;
@@ -46,5 +45,16 @@ public class Cep {
 
     public void setUf(String uf) {
         this.uf = uf;
+    }
+
+    @Override
+    public String toString() {
+        return "Cep{" +
+                "cep='" + cep + '\'' +
+                ", logradouro='" + logradouro + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", localidade='" + localidade + '\'' +
+                ", uf='" + uf + '\'' +
+                '}';
     }
 }
